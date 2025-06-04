@@ -1,36 +1,30 @@
 name: Ci Cd
 
 on:
-    push:
-        branches: [main]
+  push:
+    branches: [main]
 
 jobs:
-    CICD:
-        runs-on: ubuntu-latest
-        steps:
-            - name: SSH key
-              run: |
-                mkdir -p ~/.ssh
-                echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/.ssh/id_rsa
-                touch ~/.ssh/known_hosts
-                ssh-keyscan -H ${{vars.HOST}} > ~/.ssh/known_hosts
+  CICD:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          touch ~/.ssh/known_hosts
+          ssh-keyscan -H ${{vars.HOST}} > ~/.ssh/known_hosts
 
-              
-            - name: Serverga ulanish
-              run: ssh ${{vars.USER}}@${{vars.HOST}}
+      - name: Serverga ulanish
+        run: ssh ${{vars.USER}}@${{vars.HOST}}
 
-            - name: Git clone qilish
-              run: |
-                ssh ${{vars.USER}}@${{vars.HOST}} << 'EOF'
-                  cd loyha
-                  cd cicd
-                  git clone
-                  npm i
-                  pn2 restart cicd
-                EOF
-
-              
-                
-             
-
-           
+      - name: Git clone qilish
+        run: |
+          ssh ${{vars.USER}}@${{vars.HOST}} << 'EOF'
+            cd loyha
+            cd cicd
+            git clone
+            npm i
+            pn2 restart cicd
+          EOF
