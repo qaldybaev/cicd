@@ -5,14 +5,32 @@ on:
         branches: [main]
 
 jobs:
-    Test:
-        runs-on: windows-latest
+    CICD:
+        runs-on: ubuntu-latest
         steps:
-            - name: Repasitoryni yuklash
-              uses: actions/checkout@v4
+            - name: SSH key
+              run: |
+                mkdir -p ~/.ssh
+                echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/ssh/id_rsa
+                ssh-keyscan -H ${{vars.HOST}} > ~/.ssh/known_hosts
 
-            - name: node_modules
-              run: npm install
+              
+              
+            - name: Serverga ulanish
+              run: ssh ${{vars.USER}}@${{vars.HOST}}
 
-            - name: Build qilish
-              run: npm run build
+            - name: Git clone qilish
+              run: |
+                ssh ${{vars.USER}}@${{vars.HOST}} << 'EOF'
+                  cd loyha
+                  cd cicd
+                  git clone
+                  npm i
+                  pn2 restart cicd
+                EOF
+
+              
+                
+             
+
+           
